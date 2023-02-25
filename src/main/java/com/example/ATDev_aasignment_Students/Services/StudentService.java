@@ -15,34 +15,58 @@ public class StudentService {
 
     public String addStudent(Student student) throws Exception{
         String email = student.getEmail();
-//        if(!studentRepository.findByEmail(email))
-//            throw new Exception("email already exists!!");
+
+        Student oldStudent = studentRepository.findByEmail(email);
+        if(oldStudent!=null)
+            throw new Exception("email already exists. use another email!!");
 
         studentRepository.save(student);
         return "student added successfully";
     }
 
     public Student findByStudentId(int id){
+        if(!studentRepository.findById(id).isPresent())
+            return null;
+
         return studentRepository.findById(id).get();
     }
 
     public Student findByStudentEmail(String email){
-        return studentRepository.findByEmail(email);
+        Student student = studentRepository.findByEmail(email);
+        if (student == null)
+            return null;
+
+        return student;
     }
 
     public List<Student> findByName(String name){
-        return studentRepository.findByName(name);
+        List<Student> studentList = studentRepository.findByName(name);
+        if (studentList == null)
+            return null;
+
+        return studentList;
     }
 
     public List<Student> findByState(String state){
-        return studentRepository.findByState(state);
+        List<Student> studentList = studentRepository.findByState(state);
+        if (studentList == null)
+            return null;
+
+        return studentList;
     }
 
     public List<Student> findByAge(int age1, int age2){
-        return studentRepository.findByAge(age1, age2);
+        List<Student> studentList = studentRepository.findByAge(age1, age2);
+        if (studentList == null)
+            return null;
+
+        return studentList;
     }
 
-    public String updateStudent(int id, String mobileNo){
+    public String updateStudent(int id, String mobileNo) throws Exception{
+        if(!studentRepository.findById(id).isPresent())
+            throw new Exception("wrong input id!!");
+
         Student student = studentRepository.findById(id).get();
 
         student.setMobileNo(mobileNo);
@@ -51,7 +75,10 @@ public class StudentService {
         return "mobile no updated successfully";
     }
 
-    public String deleteStudent(int id){
+    public String deleteStudent(int id) throws Exception{
+        if(!studentRepository.findById(id).isPresent())
+            throw new Exception("wrong input id!!");
+
         studentRepository.deleteById(id);
         return "deleted successfully";
     }

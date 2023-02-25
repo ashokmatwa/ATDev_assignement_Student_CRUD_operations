@@ -3,6 +3,8 @@ package com.example.ATDev_aasignment_Students.Controllers;
 import com.example.ATDev_aasignment_Students.Models.Student;
 import com.example.ATDev_aasignment_Students.Services.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,53 +20,81 @@ public class StudentController {
 
     //add student to database
     @PostMapping("/addStudent")
-    public String addStudent(@RequestBody Student student){
+    public ResponseEntity<String> addStudent(@RequestBody Student student){
         try{
-            return studentService.addStudent(student);
+            return new ResponseEntity<>(studentService.addStudent(student), HttpStatus.CREATED);
         }catch (Exception e){
-            return e.getMessage();
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_ACCEPTABLE);
         }
     }
 
     //get student from database through given id
     @GetMapping("/findById")
-    public Student findByStudentId(@RequestParam("id") int id){
-        return studentService.findByStudentId(id);
+    public ResponseEntity<Student> findByStudentId(@RequestParam("id") int id){
+        Student student = studentService.findByStudentId(id);
+        if(student == null)
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+
+       return new ResponseEntity<>(student, HttpStatus.FOUND);
     }
 
     //get student from database through given email
     @GetMapping("/findByStudentEmail")
-    public Student findByStudentEmail(@RequestParam("email") String email){
-        return studentService.findByStudentEmail(email);
+    public ResponseEntity<Student> findByStudentEmail(@RequestParam("email") String email){
+        Student student = studentService.findByStudentEmail(email);
+        if(student == null)
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+
+        return new ResponseEntity<>(student, HttpStatus.FOUND);
     }
 
     //get list of student from database through given name
     @GetMapping("/findByName")
-    public List<Student> findByName(@RequestParam("name") String name){
-        return studentService.findByName(name);
+    public ResponseEntity<List<Student>> findByName(@RequestParam("name") String name){
+        List<Student> studentList = studentService.findByName(name);
+        if(studentList == null)
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+
+        return new ResponseEntity<>(studentList, HttpStatus.FOUND);
     }
 
     //get list of student from database through given state
     @GetMapping("/findByState")
-    public List<Student> findByState(@RequestParam("state") String state){
-        return studentService.findByState(state);
+    public ResponseEntity<List<Student>> findByState(@RequestParam("state") String state){
+        List<Student> studentList = studentService.findByState(state);
+        if(studentList == null)
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+
+        return new ResponseEntity<>(studentList, HttpStatus.FOUND);
     }
 
     //get list of student from database through given range of age
     @GetMapping("/findByAge")
-    public List<Student> findByAge(@RequestParam("age1") int age1, @RequestParam("age2") int age2){
-        return studentService.findByAge(age1, age2);
+    public ResponseEntity<List<Student>> findByAge(@RequestParam("age1") int age1, @RequestParam("age2") int age2){
+        List<Student> studentList = studentService.findByAge(age1, age2);
+        if(studentList == null)
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+
+        return new ResponseEntity<>(studentList, HttpStatus.FOUND);
     }
 
     //update student's mobile number in database through student id and new mobile number
     @PutMapping("/update")
-    public String updateStudent(@RequestParam("id") int id,@RequestParam("mobileNo") String mobileNo){
-        return studentService.updateStudent(id, mobileNo);
+    public ResponseEntity<String> updateStudent(@RequestParam("id") int id,@RequestParam("mobileNo") String mobileNo){
+        try {
+            return new ResponseEntity<>(studentService.updateStudent(id, mobileNo), HttpStatus.ACCEPTED);
+        }catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     //delete student from database
     @DeleteMapping("/delete")
-    public String deleteStudent(@RequestParam("id") int id){
-        return studentService.deleteStudent(id);
+    public ResponseEntity<String> deleteStudent(@RequestParam("id") int id){
+        try {
+            return new ResponseEntity<>(studentService.deleteStudent(id), HttpStatus.ACCEPTED);
+        }catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 }
